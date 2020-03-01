@@ -1,6 +1,8 @@
 import math
 
-from model.board import Board
+import time
+
+import pygame
 
 DEFAULT_COST = 10
 
@@ -13,14 +15,14 @@ class Node:
         self.__children_nodes = []
         self.__global_cost = 0
         self.__local_cost = 0
-        self.__calculate_costs(self.__parent_node, position, goal_position)
+        self.__calculate_costs(self, self.__parent_node, position, goal_position)
 
     @staticmethod
     def __calculate_costs(self, parent_node, position, goal_position):
         if parent_node is not None:
             self.__local_cost = parent_node.get_costs[1] + DEFAULT_COST
 
-        square_x = math.pow(goal_position[1] - position[1], 2) * DEFAULT_COST
+        square_x = math.pow(goal_position[0] - position[0], 2) * DEFAULT_COST
         square_y = math.pow(goal_position[1] - position[1], 2) * DEFAULT_COST
         self.__global_cost = math.trunc(math.sqrt(square_x + square_y))
 
@@ -40,13 +42,13 @@ class Node:
 
 class PathFinder:
     def __init__(self, board, initial_position=None, goal_position=None):
-        if goal_position is None:
-            goal_position = []
         if initial_position is None:
             initial_position = [0, 0]
+        if goal_position is None:
+            goal_position = [board.get_width(), board.get_height()]
         self.initial_position = initial_position
         self.__goal_position = goal_position
-        self.__selected_path_nodes = [Node(None)]
+        self.__selected_path_nodes = [Node(None, initial_position, goal_position)]
         self.__path_nodes = []
         self.__board = board
 
@@ -54,4 +56,8 @@ class PathFinder:
         return self.__board
 
     def start(self):
-        pass
+        self.__calculate()
+
+    def __calculate(self):
+        for i in range(10):
+            print(i)

@@ -1,18 +1,10 @@
-"""
- Example program to show using an array to back a grid on-screen.
 
- Sample Python/Pygame Programs
- Simpson College Computer Science
- http://programarcadegames.com/
- http://simpson.edu/computer-science/
-
- Explanation video: http://youtu.be/mdTeqiWyFnc
-"""
 import pygame
 
 from model.a_star import PathFinder
 from model.board import Board
-# Define some colors
+import threading
+
 BACKGROUND_COLOR = (81, 162, 0)
 
 
@@ -28,8 +20,9 @@ def __map_mouse_to_grid():
 WIDTH = 32
 HEIGHT = 32
 
-path_finder = PathFinder()
-board = path_finder.get_board()
+board = Board()
+path_finder = PathFinder(board)
+
 
 pygame.init()
 
@@ -40,23 +33,33 @@ pygame.display.set_caption("Algoritmo A*")
 
 done = False
 clock = pygame.time.Clock()
+seconds = 0
+pygame.time.set_timer(pygame.USEREVENT+1, 1000)
 while not done:
     for event in pygame.event.get():
         x, y = __map_mouse_to_grid()
+        modifier_pressed = pygame.key.get_mods()
         if event.type == pygame.QUIT:
             done = True
 
         if event.type == pygame.MOUSEMOTION:
-            if pygame.mouse.get_pressed()[0]:
+            print(pygame.key.get_mods())
+            if pygame.mouse.get_pressed()[0] and modifier_pressed == pygame.KMOD_LCTRL:
                 board.set_at(x, y, board.WALL)
-            if pygame.mouse.get_pressed()[2]:
+            if pygame.mouse.get_pressed()[0] and modifier_pressed == pygame.KMOD_LALT:
                 board.set_at(x, y, board.GROUND)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if pygame.mouse.get_pressed()[0]:
+            if pygame.mouse.get_pressed()[0] and modifier_pressed == pygame.KMOD_NONE:
                 board.set_at(x, y, board.START)
-            elif pygame.mouse.get_pressed()[2]:
+            elif pygame.mouse.get_pressed()[2] and modifier_pressed == pygame.KMOD_NONE:
                 board.set_at(x, y, board.END)
+
+# hace un evento custom cada segundo
+  #      if event.type == pygame.USEREVENT+1:
+   #         seconds += 1
+    #        # pathfinder.next_step
+     #       print(seconds)
 
     screen.fill(BACKGROUND_COLOR)
 
